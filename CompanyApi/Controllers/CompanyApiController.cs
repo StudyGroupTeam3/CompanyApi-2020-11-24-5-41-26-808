@@ -28,10 +28,22 @@ namespace CompanyApi.Controllers
             return null;
         }
 
-        [HttpGet("companies")]
+        [HttpGet("companies/{name}")]
         public Company GetCompanyByName(string name)
         {
             return companies.FirstOrDefault(com => com.CompanyName == name);
+        }
+
+        [HttpGet("companies")]
+        public List<Company> GetAllCompany()
+        {
+            return companies;
+        }
+
+        [HttpDelete("clear")]
+        public void Clear()
+        {
+            companies.Clear();
         }
     }
 }
