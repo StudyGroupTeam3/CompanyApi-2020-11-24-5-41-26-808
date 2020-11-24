@@ -12,14 +12,20 @@ using Xunit;
 
 namespace CompanyApiTest
 {
-    public class UnitTest1
+    public class CompanyApiTes
     {
+        private readonly TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
+        private readonly HttpClient client;
+        public CompanyApiTes()
+        {
+            client = server.CreateClient();
+            client.DeleteAsync("CompanyApi/clear");
+        }
+
         [Fact]
         public async Task Should_Add_Company_Successfully()
         {
             //given
-            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
-            HttpClient client = server.CreateClient();
             NameGenerator name = new NameGenerator("Tecent");
             string request = JsonConvert.SerializeObject(name);
             string testName = "Tecent";
@@ -42,18 +48,7 @@ namespace CompanyApiTest
         public async Task Should_Get_All_Company_Return_Correct_Companies()
         {
             //given
-            TestServer server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
-            HttpClient client = server.CreateClient();
-            NameGenerator name = new NameGenerator("Tecent");
-            NameGenerator name1 = new NameGenerator("Baidu");
-            string request = JsonConvert.SerializeObject(name);
-            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
-            string request1 = JsonConvert.SerializeObject(name1);
-            StringContent requestBody1 = new StringContent(request1, Encoding.UTF8, "application/json");
-            await client.DeleteAsync("CompanyApi/clear");
-            await client.PostAsync("CompanyApi/companies", requestBody);
-            var testResponse = await client.PostAsync("CompanyApi/companies", requestBody1);
-            var expectCompanyNames = new List<string>() { "Tecent", "Baidu" };
+            var expectCompanyNames = await GenerateCompanies();
 
             //when
             var response = await client.GetAsync("CompanyApi/companies");
@@ -62,7 +57,25 @@ namespace CompanyApiTest
 
             //then
             response.EnsureSuccessStatusCode();
-            Assert.Equal(expectCompanyNames, actualCompanies.Select(com => com.CompanyName).ToList());
+            Assert.Equal(expectCompanyNames.Select(item => item.Name), actualCompanies.Select(com => com.CompanyName));
+        }
+
+        private async Task<List<NameGenerator>> GenerateCompanies()
+        {
+            var companyNames = new List<NameGenerator>()
+            {
+                new NameGenerator("Tecent"),
+                new NameGenerator("Baidu"),
+                new NameGenerator("Ali"),
+            };
+
+            foreach (var requestBody in companyNames.Select(JsonConvert.SerializeObject)
+                .Select(request => new StringContent(request, Encoding.UTF8, "application/json")))
+            {
+                await client.PostAsync("CompanyApi/companies", requestBody);
+            }
+
+            return companyNames;
         }
     }
 }
