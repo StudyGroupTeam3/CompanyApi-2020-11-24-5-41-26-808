@@ -22,6 +22,7 @@ namespace CompanyApiTest.Controllers
         {
             server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
             client = server.CreateClient();
+            client.DeleteAsync("Companies/");
         }
 
         [Fact]
@@ -80,6 +81,24 @@ namespace CompanyApiTest.Controllers
             var responseString = await response.Content.ReadAsStringAsync();
             var acutalCompanyList = JsonConvert.DeserializeObject<List<Company>>(responseString);
             Assert.Equal(new List<string>() { company1.Name, company2.Name }, acutalCompanyList.Select(x => x.Name).ToList());
+        }
+
+        [Fact]
+        public async Task Should_Return_An_Existing_Company()
+        {
+            // when
+            Company company = new Company(name: "DiDi");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("Companies/", requestBody);
+
+            var response = await client.GetAsync($"Companies/{company.CompanyId}");
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var acutalCompany = JsonConvert.DeserializeObject<Company>(responseString);
+            Assert.Equal(company.Name, acutalCompany.Name);
         }
     }
 }

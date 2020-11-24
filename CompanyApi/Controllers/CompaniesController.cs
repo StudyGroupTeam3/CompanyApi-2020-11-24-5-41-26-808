@@ -32,5 +32,23 @@ namespace CompanyApi.Controllers
         {
             return Ok(companies);
         }
+
+        [HttpGet("{id}")]
+        public ActionResult<Company> GetOneCompany(string id)
+        {
+            var company = companies.FirstOrDefault(x => x.CompanyId == id);
+            if (company == null)
+            {
+               return NotFound(company);
+            }
+
+            return Ok(company);
+        }
+
+        [HttpDelete]
+        public void Clear()
+        {
+            companies.Clear();
+        }
     }
 }

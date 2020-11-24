@@ -17,6 +17,6 @@ namespace CompanyApi
         }
 
         public string Name { get; set; }
-        public string CompanyId => Guid.NewGuid().ToString();
+        public string CompanyId { get; set; } = Guid.NewGuid().ToString();
     }
 }
