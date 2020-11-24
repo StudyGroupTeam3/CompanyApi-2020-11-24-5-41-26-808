@@ -1,0 +1,114 @@
+AC1:
+POST/companies
+request body
+{
+"companyName": "string"
+}
+response code: 201, 409
+response body {}
+return Location in Header
+
+AC2:
+GET/companies
+request body {}
+response code: 200
+response body
+[
+{
+companyID: string,
+companyName: string
+},
+...
+]
+
+AC3:
+GET/companies/{companyID}  or  GET/companies? companyName = "searched Name"
+request body {}
+response code: 200
+response body
+{
+companyID: string,
+companyName: string
+}
+
+AC4:
+GET/companies? companyNumber = X & pageNumber = Y
+request body {}
+response code: 200
+response body
+[{
+companyID: string,
+companyName: string
+},
+.....
+]
+
+AC5:
+PATCH/companies/{companyID}
+request body 
+{
+companyName: string
+}
+response code: 200
+response body
+{
+companyID: string,
+companyName: string
+}
+
+AC6:
+POST/companies/{companyID}
+request body 
+{
+name: string,
+salary: double 
+}
+response code: 201
+response body {}
+return Location in Header
+
+AC7:
+GET/companies/{companyID}/employees
+request {}
+response code: 200
+response body:
+[
+{
+employeeID: string,
+name: string,
+salary: double
+}
+]
+
+AC8:
+PATCH/companies/{companyID}/employees/{employeeID}
+request body 
+{
+name: string,
+salary: double
+}
+response code: 200
+response body
+{
+employeeID: string,
+name: string,
+salary: double
+}
+
+AC9:
+DELETE/companies/{companyID}/employees/{employeeID}
+request body {}
+response code: 200
+response body
+{}
+
+AC10
+DELETE/companies/{companyID}
+request body {}
+response code: 200
+response body
+{}
+
+
+
+
