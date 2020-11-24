@@ -22,13 +22,14 @@ namespace CompanyApiTest
             HttpClient client = server.CreateClient();
             NameGenerator name = new NameGenerator("Tecent");
             string request = JsonConvert.SerializeObject(name);
+            string testName = "Tecent";
             StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
-            var response1 = await client.GetAsync("CompanyApi/companies/{name}");
-            var responseString1 = await response1.Content.ReadAsStringAsync();
-            Company expectCompany = JsonConvert.DeserializeObject<Company>(responseString1);
 
             //when
             var response = await client.PostAsync("CompanyApi/companies", requestBody);
+            var response1 = await client.GetAsync($"CompanyApi/companies/{testName}");
+            var responseString1 = await response1.Content.ReadAsStringAsync();
+            Company expectCompany = JsonConvert.DeserializeObject<Company>(responseString1);
 
             //then
             response.EnsureSuccessStatusCode();
@@ -51,7 +52,7 @@ namespace CompanyApiTest
             StringContent requestBody1 = new StringContent(request1, Encoding.UTF8, "application/json");
             await client.DeleteAsync("CompanyApi/clear");
             await client.PostAsync("CompanyApi/companies", requestBody);
-            await client.PostAsync("CompanyApi/companies", requestBody1);
+            var testResponse = await client.PostAsync("CompanyApi/companies", requestBody1);
             var expectCompanyNames = new List<string>() { "Tecent", "Baidu" };
 
             //when

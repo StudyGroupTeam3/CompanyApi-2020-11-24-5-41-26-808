@@ -20,9 +20,25 @@ namespace CompanyApi
             CompanyID = GenerateID();
         }
 
-        public string CompanyID { get; }
+        public string CompanyID { get; set; }
 
         public string CompanyName { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (!(obj is Company))
+            {
+                return false;
+            }
+
+            var com1 = (Company)obj;
+            return Compare(com1);
+        }
+
+        protected bool Compare(Company com1)
+        {
+            return com1.CompanyID == CompanyID && com1.CompanyName == CompanyName;
+        }
 
         private string GenerateID()
         {

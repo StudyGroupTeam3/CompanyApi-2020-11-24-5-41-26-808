@@ -18,14 +18,14 @@ namespace CompanyApi.Controllers
         [HttpPost("companies")]
         public Company AddNewCompany(NameGenerator generator)
         {
+            var newCompany = new Company(generator.Name);
             if (companies.Any(com => com.CompanyName == generator.Name))
             {
-                var newCompany = new Company(generator.Name);
-                companies.Add(newCompany);
-                return newCompany;
+                return null;
             }
 
-            return null;
+            companies.Add(newCompany);
+            return newCompany;
         }
 
         [HttpGet("companies/{name}")]
