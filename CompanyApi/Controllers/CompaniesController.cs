@@ -34,7 +34,11 @@ namespace CompanyApi.Controllers
             return Created(string.Empty, companyID);
         }
 
-        [HttpGet("")]
+        [HttpGet]
+        public List<Company> GetAllCompany()
+        {
+            return companies.Select(idCompanyPair => idCompanyPair.Value).ToList();
+        }
 
         private string GenerateCompanyID()
         {

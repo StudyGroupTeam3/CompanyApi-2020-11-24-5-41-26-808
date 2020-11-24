@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,9 +52,29 @@ namespace CompanyApiTest.Controllers
             string secondRequest = JsonConvert.SerializeObject(duplicatedCompany);
             StringContent secondRequestBody = new StringContent(secondRequest, Encoding.UTF8, "application/json");
             var secondResponse = await client.PostAsync("/companies", secondRequestBody);
-            var responseString = await secondResponse.Content.ReadAsStringAsync();
             // then
             Assert.Equal(409, (int)secondResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task Should_Return_All_Company_List_When_Get_GetAllCompany()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder()
+                .UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("companies/clear");
+            Company company = new Company(null, "Baymax");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("/companies", requestBody);
+            // when
+            var response = await client.GetAsync("companies");
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualCompanies = JsonConvert.DeserializeObject<List<Company>>(responseString);
+            Assert.Equal(new List<Company>() { new Company("0", "Baymax") }, actualCompanies);
         }
     }
 }
