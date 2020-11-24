@@ -1,0 +1,148 @@
+AC1: 
+POST /companies
+Request Body:
+{
+   name: ""   
+}
+Response Status: 201 CreatedAtRoute()
+Response Body:
+{
+   companyID: "",
+   name: "" 
+}
+-----------------------------------------
+POST /companies
+Request Body:
+{
+   name: ""   
+}
+Response Status: 409 Conflict()
+Response Body:
+{
+   companyID: "",
+   name: "" 
+}
+
+
+AC2:
+GET /companies
+No Request Body
+Response Status: 200 Ok()
+Response Body:
+[
+   {
+       companyID: "",
+       name: "" 
+   }, 
+   ...
+]
+
+AC3:
+GET /companies/:id
+No Request Body
+Response Status: 200 Ok()
+Response Body:
+{
+    companyID: "",
+    name: ""
+}
+-----------------------------
+GET  /companies/:id
+No Request Body
+Response Status: 404 NotFound()
+No Response Body
+
+AC4: 
+GET /companies/CompanyInformation?&pageNumber=X&pageSize=Y
+No Request Body
+Response Status: 200 Ok()
+Response Body:
+[   
+    {
+        companyID: "",
+        name: ""
+    },
+    ...
+]
+
+
+AC5:
+PATCH /companies/:id
+Request Body
+{
+    name: ""
+}
+Response Status: 200 Ok()
+Response Body:
+{
+    companyID: "",
+    name: ""    
+}
+
+
+AC6:
+POST /companies/:id/employees
+Request Body
+{
+    name: "",
+    salary: ""
+}
+Response Status: 201 CreatedAtRoute()
+Response Body:
+{
+    employeeID: "",
+    name: "",
+    salary: ""    
+}
+
+AC7:
+GET /companies/:id/employees
+No Request Body
+Response Status: 200 Ok()
+Response Body:
+{
+    employeeID: "",
+    name: "",
+    salary: ""     
+}
+
+AC8:
+PATCH /companies/:id/employees/:id
+Request Body
+{
+    name: "",
+    salary: ""     
+}
+Response Status: 200 Ok()
+Response Body:
+{
+    employeeID: "",
+    name: "",
+    salary: ""     
+}
+
+AC9:
+DELETE /companies/:id/employees/:id
+No Request Body
+Response Status: 200 Ok()
+Response Body:
+{}
+
+AC10:
+DELETE /companies/:id/employees
+No Request Body
+Response Status: 200 Ok()
+Response Body:
+{}
+--------------------------------
+DELETE /companies/:id/
+No Request Body
+Response Status: 200 Ok()
+Response Body:
+{}
+
+TimeBox: 
+Estimate: 30min
+Actual 40min
+
+
