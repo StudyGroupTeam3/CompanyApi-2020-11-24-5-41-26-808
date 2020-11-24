@@ -53,6 +53,19 @@ namespace CompanyApi.Controllers
             return companies.Select(idCompanyPair => idCompanyPair.Value).Skip((startPage - 1) * pageSize).Take(pageSize).ToList();
         }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<string>> UpdateCompany(string id, CompanyUpdateModel companyUpdateModel)
+        {
+            if (companies.Count != 0 && companies.Where(idCompanyPair => idCompanyPair.Value.Name == companyUpdateModel.Name).ToList().Count > 0)
+            {
+                return Conflict();
+            }
+
+            companies.FirstOrDefault(idCompanyPair => idCompanyPair.Value.CompanyID == id).Value.Name =
+                companyUpdateModel.Name;
+            return Created(string.Empty, id);
+        }
+
         private string GenerateCompanyID()
         {
             string companyIDGenerated = new string(companyID);

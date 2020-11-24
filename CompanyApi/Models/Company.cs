@@ -45,4 +45,18 @@ namespace CompanyApi.Models
             return CompanyID == other.CompanyID && Name == other.Name;
         }
     }
+
+    public class CompanyUpdateModel
+    {
+        public CompanyUpdateModel()
+        {
+        }
+
+        public CompanyUpdateModel(string name)
+        {
+            this.Name = name;
+        }
+
+        public string Name { get; set; }
+    }
 }

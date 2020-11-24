@@ -126,5 +126,30 @@ namespace CompanyApiTest.Controllers
             var actualCompanies = JsonConvert.DeserializeObject<List<Company>>(responseString);
             Assert.Equal(new List<Company>() { company3 }, actualCompanies);
         }
+
+        [Fact]
+        public async Task Should_Update_Company_Property_When_Patch_UpdateCompany()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder()
+                .UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("companies/clear");
+            Company company1 = new Company("0", "Baymax");
+            string request1 = JsonConvert.SerializeObject(company1);
+            StringContent requestBody1 = new StringContent(request1, Encoding.UTF8, "application/json");
+            await client.PostAsync("/companies", requestBody1);
+            // when
+            CompanyUpdateModel companyUpdateModel = new CompanyUpdateModel("GE");
+            string requestPatch = JsonConvert.SerializeObject(companyUpdateModel);
+            StringContent requestPatchBody = new StringContent(requestPatch, Encoding.UTF8, "application/json");
+            var response = await client.PatchAsync("companies/0", requestPatchBody);
+            // then
+            response.EnsureSuccessStatusCode();
+            var getResponse = await client.GetAsync("companies/0");
+            var getResponseString = await getResponse.Content.ReadAsStringAsync();
+            var actualCompany = JsonConvert.DeserializeObject<Company>(getResponseString);
+            Assert.Equal(new Company("0", "GE"), actualCompany);
+        }
     }
 }
