@@ -13,11 +13,10 @@ namespace CompanyApi
 
         public Company(string name)
         {
-            Id = Guid.NewGuid().ToString();
             Name = name;
         }
 
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; }
         public override bool Equals(object obj)
         {

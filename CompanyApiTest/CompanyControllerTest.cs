@@ -110,5 +110,28 @@ namespace CompanyApiTest
             // then
             Assert.Equal(new List<Company>() { companyList[2], companyList[3] }, actualCompanies);
         }
+
+        [Fact]
+        public async Task Should_Update_Basic_Company_Information_When_Update_Company()
+        {
+            // given
+            await client.DeleteAsync("Company/clear");
+            Company company = new Company(name: "Apple");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("Company/companies", requestBody);
+
+            // when
+            UpdateCompany updateCompany = new UpdateCompany("Pineapple");
+            string putRequest = JsonConvert.SerializeObject(updateCompany);
+            StringContent putRequestBody = new StringContent(putRequest, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"Company/companies/{company.Id}", putRequestBody);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            Company actualCompanies = JsonConvert.DeserializeObject<Company>(responseString);
+
+            // then
+            Assert.Equal(new Company("Pineapple") { Id = company.Id }, actualCompanies);
+        }
     }
 }

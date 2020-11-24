@@ -52,10 +52,11 @@ namespace CompanyApi.Controllers
         }
 
         [HttpPut("companies/{companyId}")]
-        public Company UpdateCompanyInformation(string companyId)
+        public Company UpdateCompanyInformation(string companyId, UpdateCompany updateCompany)
         {
-            //  I can update basic information of an existing company
-            return null;
+            int index = companies.IndexOf(companies.Find(company => company.Id == companyId));
+            companies[index].Name = updateCompany.Name;
+            return companies[index];
         }
 
         [HttpPost("companies/{companyId}/employees")]

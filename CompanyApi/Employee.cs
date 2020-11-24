@@ -13,12 +13,11 @@ namespace CompanyApi
 
         public Employee(string name, double salary)
         {
-            Id = Guid.NewGuid().ToString();
             Name = name;
             Salary = salary;
         }
 
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; }
         public double Salary { get; set; }
         public override bool Equals(object obj)
