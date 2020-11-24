@@ -16,24 +16,24 @@ namespace CompanyApi.Controllers
         [HttpPost("companies")]
         public Company AddCompany(Company company)
         {
-            var s = company;
-            companies.Add(company);
-            // I can add a company if its name no same to any existing company
+            if (companies.Count(thisCompany => thisCompany.Name == company.Name) == 0)
+            {
+                companies.Add(company);
+            }
+
             return company;
         }
 
         [HttpGet("companies")]
         public List<Company> GetAllCompanies()
         {
-            //  I can obtain all company list
             return companies;
         }
 
         [HttpGet("companies/{companyId}")]
         public Company GetCompanyById(string companyId)
         {
-            //  I can obtain an existing company 
-            return companies[0];
+            return companies.Find(thisCompany => thisCompany.Id == companyId);
         }
 
         [HttpGet("companies/pageDisplay/{pageIndex}")]
