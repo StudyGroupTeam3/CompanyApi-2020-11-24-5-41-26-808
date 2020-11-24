@@ -82,10 +82,10 @@ namespace CompanyApiTest
             var response = await client.GetAsync($"Company/companies/{companyList[0].Id}");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            Company actualCompanies = JsonConvert.DeserializeObject<Company>(responseString);
+            Company actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
 
             // then
-            Assert.Equal(companyList[0], actualCompanies);
+            Assert.Equal(companyList[0], actualCompany);
         }
 
         [Fact]
@@ -105,10 +105,10 @@ namespace CompanyApiTest
             var response = await client.GetAsync($"Company/companies/pages/2?pageSize=2");
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            List<Company> actualCompanies = JsonConvert.DeserializeObject<List<Company>>(responseString);
+            List<Company> actualCompany = JsonConvert.DeserializeObject<List<Company>>(responseString);
 
             // then
-            Assert.Equal(new List<Company>() { companyList[2], companyList[3] }, actualCompanies);
+            Assert.Equal(new List<Company>() { companyList[2], companyList[3] }, actualCompany);
         }
 
         [Fact]
@@ -128,10 +128,33 @@ namespace CompanyApiTest
             var response = await client.PutAsync($"Company/companies/{company.Id}", putRequestBody);
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            Company actualCompanies = JsonConvert.DeserializeObject<Company>(responseString);
+            Company actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
 
             // then
-            Assert.Equal(new Company("Pineapple") { Id = company.Id }, actualCompanies);
+            Assert.Equal(new Company("Pineapple") { Id = company.Id }, actualCompany);
+        }
+
+        [Fact]
+        public async Task Should_Add_Employee_To_Specific_Company_When_Add_Employee_To_Specific_Company()
+        {
+            // given
+            await client.DeleteAsync("Company/clear");
+            Company company = new Company(name: "Apple");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("Company/companies", requestBody);
+
+            // when
+            Employee employee = new Employee("Jack", 12000);
+            string patchRequest = JsonConvert.SerializeObject(employee);
+            StringContent putRequestBody = new StringContent(patchRequest, Encoding.UTF8, "application/json");
+            var response = await client.PatchAsync($"Company/companies/{company.Id}/employees", putRequestBody);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<Employee> actualEmployees = JsonConvert.DeserializeObject<List<Employee>>(responseString);
+
+            // then
+            Assert.Equal(new List<Employee> { employee }, actualEmployees);
         }
     }
 }

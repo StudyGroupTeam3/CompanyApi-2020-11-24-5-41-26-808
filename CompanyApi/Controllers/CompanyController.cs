@@ -59,11 +59,12 @@ namespace CompanyApi.Controllers
             return companies[index];
         }
 
-        [HttpPost("companies/{companyId}/employees")]
-        public Company AddEmployeeToCompany(string companyId)
+        [HttpPatch("companies/{companyId}/employees")]
+        public List<Employee> AddEmployeeToCompany(string companyId, Employee employee)
         {
-            //  I can add an employee to a specific company
-            return null;
+            int index = companies.IndexOf(companies.Find(company => company.Id == companyId));
+            companies[index].Employees = new List<Employee> { employee };
+            return companies[index].Employees;
         }
 
         [HttpGet("companies/{companyId}/employees")]
