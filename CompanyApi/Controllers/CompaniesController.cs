@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CompanyApi.Models;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -23,7 +24,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<string>> AddCompany(Company company)
+        public async Task<ActionResult<Company>> AddCompany(Company company)
         {
             if (companies.Count != 0 && companies.Where(idCompanyPair => idCompanyPair.Value.Name == company.Name).ToList().Count > 0)
             {
@@ -31,8 +32,9 @@ namespace CompanyApi.Controllers
             }
 
             string companyID = GenerateCompanyID();
-            companies[companyID] = new Company(companyID, company.Name);
-            return Created(string.Empty, companyID);
+            Company newCompany = new Company(companyID, company.Name);
+            companies[companyID] = newCompany;
+            return CreatedAtRoute(nameof(GetCompanyByID), new { id = newCompany.CompanyID }, newCompany);
         }
 
         [HttpGet]
@@ -41,7 +43,7 @@ namespace CompanyApi.Controllers
             return companies.Select(idCompanyPair => idCompanyPair.Value).ToList();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCompanyByID")]
         public Company GetCompanyByID(string id)
         {
             return companies[id];
@@ -54,7 +56,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<string>> UpdateCompany(string id, CompanyUpdateModel companyUpdateModel)
+        public async Task<ActionResult> UpdateCompany(string id, CompanyUpdateModel companyUpdateModel)
         {
             if (companies.Count != 0 && companies.Where(idCompanyPair => idCompanyPair.Value.Name == companyUpdateModel.Name).ToList().Count > 0)
             {
@@ -63,7 +65,17 @@ namespace CompanyApi.Controllers
 
             companies.FirstOrDefault(idCompanyPair => idCompanyPair.Value.CompanyID == id).Value.Name =
                 companyUpdateModel.Name;
-            return Created(string.Empty, id);
+            return Ok();
+        }
+
+        [HttpPost("{id}/employees")]
+        public async Task<ActionResult<Company>> AddEmployee(string id, Employee employee)
+        {
+            var company = companies[id];
+
+            var newEmployee = new Employee(company.GenerateCEmployeeID(), employee.Name, employee.Salary);
+            company.Employees[newEmployee.EmployeeId] = newEmployee;
+            return Ok(newEmployee);
         }
 
         private string GenerateCompanyID()

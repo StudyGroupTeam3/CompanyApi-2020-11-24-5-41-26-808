@@ -7,6 +7,8 @@ namespace CompanyApi.Models
 {
     public class Company
     {
+        private string employeeID = "0";
+
         public Company()
         {
         }
@@ -19,6 +21,14 @@ namespace CompanyApi.Models
 
         public string CompanyID { get; set; }
         public string Name { get; set; }
+        public SortedDictionary<string, Employee> Employees { get; set; } = new SortedDictionary<string, Employee>();
+
+        public string GenerateCEmployeeID()
+        {
+            string employeeIDGenerated = new string(employeeID);
+            employeeID = (uint.Parse(employeeID) + 1).ToString();
+            return employeeIDGenerated;
+        }
 
         public override bool Equals(object obj)
         {
