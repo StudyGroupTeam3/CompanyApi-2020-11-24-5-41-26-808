@@ -70,8 +70,8 @@ namespace CompanyApi.Controllers
         [HttpGet("companies/{companyId}/employees")]
         public List<Employee> GetEmployeesInCompany(string companyId)
         {
-            //  I can obtain list of all employee under a specific company
-            return null;
+            int index = companies.IndexOf(companies.Find(company => company.Id == companyId));
+            return companies[index].Employees;
         }
 
         [HttpPut("companies/{companyId}/{employeeId}")]
