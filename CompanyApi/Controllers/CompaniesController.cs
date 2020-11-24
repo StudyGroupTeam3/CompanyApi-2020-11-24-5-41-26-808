@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CompanyApi.Models;
+﻿using CompanyApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace CompanyApi.Controllers
 {
@@ -16,8 +13,15 @@ namespace CompanyApi.Controllers
         [HttpPost]
         public Company AddCompany(Company company)
         {
+            company.CompanyId = companies.Count.ToString();
             companies.Add(company);
             return company;
+        }
+
+        [HttpGet]
+        public List<Company> GetCompanies()
+        {
+            return companies;
         }
 
         [HttpDelete]

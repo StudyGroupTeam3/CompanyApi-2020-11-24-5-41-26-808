@@ -11,10 +11,10 @@ namespace CompanyApi.Models
         {
         }
 
-        public Company(string name)
+        public Company(string name, string id)
         {
             Name = name;
-            CompanyId = "1234";
+            CompanyId = id;
         }
 
         public string CompanyId { get; set; }
