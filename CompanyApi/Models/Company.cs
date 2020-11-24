@@ -7,13 +7,23 @@ namespace CompanyApi.Models
 {
     public class Company
     {
-        public Company(string companyID, string name)
+        public Company()
         {
-            CompanyID = companyID;
-            Name = name;
         }
 
-        public string CompanyID { get; }
-        public string Name { get; }
+        public Company(string name)
+        {
+            Name = name;
+            CompanyId = "1234";
+        }
+
+        public string CompanyId { get; set; }
+        public string Name { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            var company = (Company)obj;
+            return company != null && company.Name == Name && company.CompanyId == CompanyId;
+        }
     }
 }
