@@ -122,6 +122,36 @@ namespace CompanyApiTest
             Assert.Equal(employee, companies[0].GetEmployees()[0]);
         }
 
+        // companies/{companyID}/employees
+        [Fact]
+        public async void AC7_should_return_employee_list_when_get_all_employees_of_company()
+        {
+            // given
+            var companies = await AddCompanies();
+            var employees = new List<Employee>()
+            {
+                new Employee("0", "person1", 1000),
+                new Employee("1", "person2", 2000),
+                new Employee("2", "person3", 3000),
+            };
+
+            // when
+            foreach (var requestBody in employees.Select(employee => JsonConvert.SerializeObject(employee))
+                .Select(request => new StringContent(request, Encoding.UTF8, "application/json")))
+            {
+                await client.PostAsync($"companies/{companies[0].CompanyId}/employees", requestBody);
+            }
+
+            var response = await client.GetAsync($"companies/{companies[0].CompanyId}/employees");
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<List<Employee>>(responseString);
+
+            Assert.Equal(employees, actual);
+        }
+
         private async Task<List<Company>> AddCompanies()
         {
             var companies = new List<Company>()

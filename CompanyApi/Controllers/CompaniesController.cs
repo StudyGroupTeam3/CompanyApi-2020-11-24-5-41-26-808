@@ -48,6 +48,12 @@ namespace CompanyApi.Controllers
             return companyFound?.AddEmployee(employee);
         }
 
+        [HttpGet("{companyID}/employees")]
+        public List<Employee> GetEmployeeList(string companyId)
+        {
+            return companies.FirstOrDefault(company => company.CompanyId == companyId)?.GetEmployees();
+        }
+
         [HttpDelete]
         public void Clear()
         {

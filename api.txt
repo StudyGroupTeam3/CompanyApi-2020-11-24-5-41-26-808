@@ -93,7 +93,7 @@ POST
 
 AC7: As a user, I can obtain list of all employee under a specific company
 GET
-/companies/{companyID}
+/companies/{companyID}/employees
 null
 201
 [
