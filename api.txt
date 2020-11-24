@@ -76,13 +76,18 @@ updateModel{
 
 
 AC6: As a user, I can add an employee to a specific company
-PATCH
+POST
 /companies/{companyID}/employees
 {
     "name" : "",
     "salary" : "",
 }
-204
+201
+{
+    "employeeId" : ""
+    "name" : "",
+    "salary" : "",
+}
 
 
 
