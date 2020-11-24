@@ -1,14 +1,13 @@
-﻿using System;
+﻿using CompanyApi;
+using CompanyApi.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using CompanyApi;
-using CompanyApi.Models;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace CompanyApiTest
@@ -59,6 +58,24 @@ namespace CompanyApiTest
             var actual = JsonConvert.DeserializeObject<List<Company>>(responseString);
 
             Assert.Equal(companies, actual);
+        }
+
+        // companies/{companyId}
+        [Fact]
+        public async void AC3_should_return_an_existing_company()
+        {
+            // given
+            var companies = await AddCompanies();
+
+            // when
+            var response = await client.GetAsync($"companies/{companies[0].CompanyId}");
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<Company>(responseString);
+
+            Assert.Equal(companies[0], actual);
         }
 
         private async Task<List<Company>> AddCompanies()
