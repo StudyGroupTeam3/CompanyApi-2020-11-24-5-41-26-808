@@ -7,7 +7,7 @@ namespace CompanyApi.Models
 {
     public class Company
     {
-        private static List<Employee> employees = new List<Employee>();
+        private List<Employee> employees = new List<Employee>();
         public Company()
         {
         }

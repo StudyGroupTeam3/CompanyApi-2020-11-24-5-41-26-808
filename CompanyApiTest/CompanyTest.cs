@@ -119,7 +119,6 @@ namespace CompanyApiTest
             var actual = JsonConvert.DeserializeObject<Employee>(responseString);
 
             Assert.Equal(employee, actual);
-            Assert.Equal(employee, companies[0].GetEmployees()[0]);
         }
 
         // companies/{companyID}/employees
@@ -175,7 +174,7 @@ namespace CompanyApiTest
 
             var request2 = JsonConvert.SerializeObject(updateData);
             var requestBody2 = new StringContent(request2, Encoding.UTF8, "application/json");
-            await client.PatchAsync($"companies/{companies[0].CompanyId}/employees/{companies[0].GetEmployees()[2].EmployeeID}", requestBody2);
+            await client.PatchAsync($"companies/{companies[0].CompanyId}/employees/{employees[2].EmployeeID}", requestBody2);
             var response = await client.GetAsync($"companies/{companies[0].CompanyId}/employees");
             // then
             response.EnsureSuccessStatusCode();
@@ -205,7 +204,7 @@ namespace CompanyApiTest
                 await client.PostAsync($"companies/{companies[0].CompanyId}/employees", requestBody);
             }
 
-            await client.DeleteAsync($"companies/{companies[0].CompanyId}/employees/{companies[0].GetEmployees()[2].EmployeeID}");
+            await client.DeleteAsync($"companies/{companies[0].CompanyId}/employees/{employees[2].EmployeeID}");
             employees.Remove(employees[2]);
             var response = await client.GetAsync($"companies/{companies[0].CompanyId}/employees");
 
@@ -237,6 +236,26 @@ namespace CompanyApiTest
             Assert.Equal(companies, actual);
         }
 
+        // companies?pageSize={x}&&pageIndex={y}
+        [Fact]
+        public async void AC4_should_return_correct_companies_when_get_X_companies_from_page_index_Y()
+        {
+            // given
+            var companies = await Add30Companies();
+
+            // when
+            const int pageSize = 6;
+            const int pageIndex = 3;
+            var response = await client.GetAsync($"companies?pageSize={pageSize}&pageIndex={pageIndex}");
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<List<Company>>(responseString);
+
+            Assert.Equal(companies.GetRange(12, 6), actual);
+        }
+
         private async Task<List<Company>> AddCompanies()
         {
             var companies = new List<Company>()
@@ -245,6 +264,23 @@ namespace CompanyApiTest
                 new Company("NAME2", "1"),
                 new Company("NAME3", "2"),
             };
+
+            foreach (var requestBody in companies.Select(JsonConvert.SerializeObject)
+                .Select(request => new StringContent(request, Encoding.UTF8, "application/json")))
+            {
+                await client.PostAsync("companies", requestBody);
+            }
+
+            return companies;
+        }
+
+        private async Task<List<Company>> Add30Companies()
+        {
+            var companies = new List<Company>();
+            for (var i = 0; i < 30; i++)
+            {
+                companies.Add(new Company($"NAME{i}", i.ToString()));
+            }
 
             foreach (var requestBody in companies.Select(JsonConvert.SerializeObject)
                 .Select(request => new StringContent(request, Encoding.UTF8, "application/json")))

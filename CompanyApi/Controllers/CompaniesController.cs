@@ -20,9 +20,11 @@ namespace CompanyApi.Controllers
         }
 
         [HttpGet]
-        public List<Company> GetCompanies()
+        public List<Company> GetCompanies(int pageSize, int pageIndex)
         {
-            return companies;
+            return pageSize == 0 && pageIndex == 0
+                ? companies
+                : companies.GetRange(pageSize * (pageIndex - 1), pageSize);
         }
 
         [HttpGet("{companyId}")]
