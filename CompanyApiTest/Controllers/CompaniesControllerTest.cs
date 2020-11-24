@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -176,6 +177,32 @@ namespace CompanyApiTest.Controllers
             var getResponseString = await getResponse.Content.ReadAsStringAsync();
             var actualCompany = JsonConvert.DeserializeObject<Company>(getResponseString);
             Assert.Equal(new Employee("0", "Jim", 10000), actualCompany.Employees["0"]);
+        }
+
+        [Fact]
+        public async Task Should_Retuen_All_Employee_When_Get_GetAllEmployee()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder()
+                .UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("companies/clear");
+            Company company1 = new Company("0", "Baymax");
+            company1.Employees["0"] = new Employee("0", "Jim", 10000);
+            string request1 = JsonConvert.SerializeObject(company1);
+            StringContent requestBody1 = new StringContent(request1, Encoding.UTF8, "application/json");
+            await client.PostAsync("/companies", requestBody1);
+            // when
+            Employee newEmployee = new Employee("0", "Jim", 10000);
+            string request = JsonConvert.SerializeObject(newEmployee);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/companies/0/employees", requestBody);
+            // then
+            response.EnsureSuccessStatusCode();
+            var getResponse = await client.GetAsync("companies/0");
+            var getResponseString = await getResponse.Content.ReadAsStringAsync();
+            var actualCompany = JsonConvert.DeserializeObject<Company>(getResponseString);
+            Assert.Equal(new List<Employee>() { newEmployee }, actualCompany.Employees.Values.ToList());
         }
     }
 }

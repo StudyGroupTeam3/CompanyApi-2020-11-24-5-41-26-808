@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using CompanyApi.Models;
 using Microsoft.AspNetCore.CookiePolicy;
@@ -76,6 +77,12 @@ namespace CompanyApi.Controllers
             var newEmployee = new Employee(company.GenerateCEmployeeID(), employee.Name, employee.Salary);
             company.Employees[newEmployee.EmployeeId] = newEmployee;
             return Ok(newEmployee);
+        }
+
+        [HttpGet("{companyID}/employees")]
+        public List<Employee> GetAllEmployee(string companyID)
+        {
+            return companies[companyID].Employees.Values.ToList();
         }
 
         private string GenerateCompanyID()
