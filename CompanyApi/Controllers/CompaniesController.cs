@@ -40,6 +40,12 @@ namespace CompanyApi.Controllers
             return companies.Select(idCompanyPair => idCompanyPair.Value).ToList();
         }
 
+        [HttpGet("{id}")]
+        public Company GetCompanyByID(string id)
+        {
+            return companies[id];
+        }
+
         private string GenerateCompanyID()
         {
             string companyIDGenerated = new string(this.companyID);

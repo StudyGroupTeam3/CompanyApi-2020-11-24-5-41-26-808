@@ -76,5 +76,26 @@ namespace CompanyApiTest.Controllers
             var actualCompanies = JsonConvert.DeserializeObject<List<Company>>(responseString);
             Assert.Equal(new List<Company>() { new Company("0", "Baymax") }, actualCompanies);
         }
+
+        [Fact]
+        public async Task Should_Return_Specified_Company_When_Get_GetCompanyByID()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder()
+                .UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("companies/clear");
+            Company company = new Company(null, "Baymax");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("/companies", requestBody);
+            // when
+            var response = await client.GetAsync("companies/0");
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualCompanies = JsonConvert.DeserializeObject<Company>(responseString);
+            Assert.Equal(new Company("0", "Baymax"), actualCompanies);
+        }
     }
 }
