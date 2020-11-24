@@ -74,11 +74,14 @@ namespace CompanyApi.Controllers
             return companies[index].Employees;
         }
 
-        [HttpPut("companies/{companyId}/{employeeId}")]
-        public List<Employee> UpdateEmployeeInformation(string companyId, string employeeId)
+        [HttpPatch("companies/{companyId}/{employeeId}")]
+        public Employee UpdateEmployeeInformation(string companyId, string employeeId, UpdateEmployee updateEmployee)
         {
-            //  I can update basic information of a specific employee under a specific company
-            return null;
+            int companyIndex = companies.IndexOf(companies.Find(company => company.Id == companyId));
+            int employIndex = companies[companyIndex].Employees.IndexOf(companies[companyIndex].Employees.Find(employ => employ.Id == employeeId));
+            companies[companyIndex].Employees[employIndex].Name = updateEmployee.Name;
+            companies[companyIndex].Employees[employIndex].Salary = updateEmployee.Salary;
+            return companies[companyIndex].Employees[employIndex];
         }
 
         [HttpDelete("companies/{companyId}/{employeeId}")]

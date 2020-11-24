@@ -177,5 +177,29 @@ namespace CompanyApiTest
             // then
             Assert.Equal(new List<Employee> { employee }, actualEmployees);
         }
+
+        [Fact]
+        public async Task Should_Update_Employee_In_Specific_Company_When_Update_Employee_In_Specific_Company()
+        {
+            // given
+            await client.DeleteAsync("Company/clear");
+            Employee employee = new Employee("Jack", 12000);
+            Company company = new Company(name: "Apple") { Employees = new List<Employee> { employee } };
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("Company/companies", requestBody);
+
+            // when
+            UpdateEmployee updateEmployee = new UpdateEmployee("Rose", 30000);
+            string patchRequest = JsonConvert.SerializeObject(updateEmployee);
+            StringContent patchRequestBody = new StringContent(patchRequest, Encoding.UTF8, "application/json");
+            var response = await client.PatchAsync($"Company/companies/{company.Id}/{employee.Id}", patchRequestBody);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            Employee actualEmployee = JsonConvert.DeserializeObject<Employee>(responseString);
+
+            // then
+            Assert.Equal(new Employee("Rose", 30000) { Id = employee.Id }, actualEmployee);
+        }
     }
 }
