@@ -35,8 +35,15 @@ namespace CompanyApi.Controllers
         }
 
         [HttpGet("companies")]
-        public List<Company> GetAllCompany()
+        public List<Company> GetAllCompany(int? x, int? y)
         {
+            if (x.HasValue && y.HasValue)
+            {
+                var index = (int)x * (int)y;
+                var count = (int)x;
+                return companies.Select(company => company).ToList().GetRange(index, count);
+            }
+
             return companies;
         }
 

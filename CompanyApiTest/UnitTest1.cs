@@ -77,6 +77,23 @@ namespace CompanyApiTest
             Assert.Equal(expectedName, actualCompanies.CompanyName);
         }
 
+        [Fact]
+        public async Task Should_Get_X_Companies_From_Y_Page_Return_Correct_Companies()
+        {
+            //given
+            var expectCompanyNames = await GenerateCompanies();
+
+            //when
+            var response = await client.GetAsync("CompanyApi/companies?X=3&Y=0");
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<Company> actualCompanies = JsonConvert.DeserializeObject<List<Company>>(responseString);
+
+            //then
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(expectCompanyNames.Select(item => item.Name).Take(3),
+                actualCompanies.Select(com => com.CompanyName));
+        }
+
         private async Task<List<NameGenerator>> GenerateCompanies()
         {
             var companyNames = new List<NameGenerator>()
@@ -84,6 +101,9 @@ namespace CompanyApiTest
                 new NameGenerator("Tecent"),
                 new NameGenerator("Baidu"),
                 new NameGenerator("Ali"),
+                new NameGenerator("Meituan"),
+                new NameGenerator("Didi"),
+                new NameGenerator("ByteDance"),
             };
 
             foreach (var requestBody in companyNames.Select(JsonConvert.SerializeObject)
