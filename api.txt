@@ -1,0 +1,134 @@
+AC1: As a user, I can add a company if its name no same to any existing company
+POST 
+/companies
+{
+    "name" : "",
+}
+201 
+Header Location: /companies/{companyID}
+{
+    "companyID" : "",
+    "name" : "",
+}
+
+POST 
+/companies
+{
+    "name" : "",
+}
+400 
+message: name exists
+
+
+
+AC2: As a user, I can obtain all company list
+GET 
+/companies
+null
+201
+[
+    {
+        "companyID" : "",
+        "name" : "",
+    },
+    ...
+]
+
+
+
+AC3: As a user, I can obtain an existing company
+GET 
+/companies/{companyID}
+null
+201
+{
+    "companyID" : "",
+    "name" : "",
+}
+
+
+AC4: As a user, I can obtain X(page size) companies from index of Y(page index start from 1)
+GET
+/companies/{companyID}?pageSize={x}&&pageIndex={y}
+Parameters{
+    "pageSize" : x,
+    "pageIndex" : y,
+}
+201
+[
+    {
+        "companyID" : "",
+        "name" : "",
+    },
+    ... // x companies total
+]
+
+
+
+AC5: As a user, I can update basic information of an existing company
+PATCH
+/companies/{companyID}
+updateModel{
+    "name" : "",
+}
+204
+
+
+
+AC6: As a user, I can add an employee to a specific company
+PATCH
+/companies/{companyID}
+{
+    "name" : "",
+    "salary" : "",
+}
+204
+
+
+
+AC7: As a user, I can obtain list of all employee under a specific company
+GET
+/companies/{companyID}
+null
+201
+[
+    {
+        "employeeID" : "",
+        "name" : "",
+        "salary" : "",
+    },
+    ...
+]
+
+
+
+AC8: As a user, I can update basic information of a specific employee under a specific company
+PATCH
+/companies/{companyID}/{employeeID}
+updateModel{
+    "name" : "",
+    "salary" : "",
+}
+204
+
+
+
+AC9: As a user, I can delete a specific employee under a specific company.
+DELETE
+/companies/{companyID}/{employeeID}
+null
+204
+
+
+
+AC10: As a user, I can delete a specific company, and all employees belong to this company should also be deleted  
+DELETE
+/companies/{companyID}
+null
+204
+
+GET
+/companies/{companyID}
+null
+201
+[]
