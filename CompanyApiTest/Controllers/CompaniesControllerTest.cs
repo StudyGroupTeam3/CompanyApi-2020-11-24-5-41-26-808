@@ -97,5 +97,34 @@ namespace CompanyApiTest.Controllers
             var actualCompanies = JsonConvert.DeserializeObject<Company>(responseString);
             Assert.Equal(new Company("0", "Baymax"), actualCompanies);
         }
+
+        [Fact]
+        public async Task Should_Return_Page_Size_Company_From_StartPage_When_Get_GetCompanyByPage()
+        {
+            // given
+            TestServer server = new TestServer(new WebHostBuilder()
+                .UseStartup<Startup>());
+            HttpClient client = server.CreateClient();
+            await client.DeleteAsync("companies/clear");
+            Company company1 = new Company("0", "Baymax");
+            string request1 = JsonConvert.SerializeObject(company1);
+            StringContent requestBody1 = new StringContent(request1, Encoding.UTF8, "application/json");
+            await client.PostAsync("/companies", requestBody1);
+            Company company2 = new Company("1", "Jack");
+            string request2 = JsonConvert.SerializeObject(company2);
+            StringContent requestBody2 = new StringContent(request2, Encoding.UTF8, "application/json");
+            await client.PostAsync("/companies", requestBody2);
+            Company company3 = new Company("2", "IBM");
+            string request3 = JsonConvert.SerializeObject(company3);
+            StringContent requestBody3 = new StringContent(request3, Encoding.UTF8, "application/json");
+            await client.PostAsync("/companies", requestBody3);
+            // when
+            var response = await client.GetAsync("companies/page?pagesize=2&startpage=2");
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actualCompanies = JsonConvert.DeserializeObject<List<Company>>(responseString);
+            Assert.Equal(new List<Company>() { company3 }, actualCompanies);
+        }
     }
 }

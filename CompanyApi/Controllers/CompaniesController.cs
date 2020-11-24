@@ -13,11 +13,12 @@ namespace CompanyApi.Controllers
     public class CompaniesController : ControllerBase
     {
         private static SortedDictionary<string, Company> companies = new SortedDictionary<string, Company>();
-        private string companyID = "0";
+        private static string companyID = "0";
 
         [HttpDelete("clear")]
         public async Task ClearCompany()
         {
+            companyID = "0";
             companies.Clear();
         }
 
@@ -46,10 +47,16 @@ namespace CompanyApi.Controllers
             return companies[id];
         }
 
+        [HttpGet("page")]
+        public List<Company> GetCompanyByPage(int pageSize, int startPage)
+        {
+            return companies.Select(idCompanyPair => idCompanyPair.Value).Skip((startPage - 1) * pageSize).Take(pageSize).ToList();
+        }
+
         private string GenerateCompanyID()
         {
-            string companyIDGenerated = new string(this.companyID);
-            this.companyID = (uint.Parse(this.companyID) + 1).ToString();
+            string companyIDGenerated = new string(companyID);
+            companyID = (uint.Parse(companyID) + 1).ToString();
             return companyIDGenerated;
         }
     }
