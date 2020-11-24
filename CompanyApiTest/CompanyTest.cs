@@ -217,6 +217,26 @@ namespace CompanyApiTest
             Assert.Equal(employees, actual);
         }
 
+        // companies/{companyID}
+        [Fact]
+        public async void AC10_should_return_empty_employee_list_when_delete_specific_company()
+        {
+            // given
+            var companies = await AddCompanies();
+
+            // when
+            await client.DeleteAsync($"companies/{companies[2].CompanyId}");
+            var response = await client.GetAsync("companies");
+            companies.Remove(companies[2]);
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<List<Company>>(responseString);
+
+            Assert.Equal(companies, actual);
+        }
+
         private async Task<List<Company>> AddCompanies()
         {
             var companies = new List<Company>()
