@@ -8,32 +8,35 @@ using MySql.Data.MySqlClient;
 
 namespace CompanyApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CompanyController : ControllerBase
     {
+        private static List<Company> companies = new List<Company>();
         [HttpPost("companies")]
-        public void AddCompany()
+        public Company AddCompany(Company company)
         {
+            var s = company;
+            companies.Add(company);
             // I can add a company if its name no same to any existing company
-            return;
+            return company;
         }
 
         [HttpGet("companies")]
         public List<Company> GetAllCompanies()
         {
             //  I can obtain all company list
-            return null;
+            return companies;
         }
 
         [HttpGet("companies/{companyId}")]
         public Company GetCompanyById(string companyId)
         {
             //  I can obtain an existing company 
-            return null;
+            return companies[0];
         }
 
-        [HttpGet("companies/{pageIndex}")]
+        [HttpGet("companies/pageDisplay/{pageIndex}")]
         public List<Company> GetCompaniesInOnePage(int pageSize, int pageIndex)
         {
             //  I can obtain X(page size) companies from index of Y(page index start from 1)

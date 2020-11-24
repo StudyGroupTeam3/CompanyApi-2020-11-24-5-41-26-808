@@ -20,21 +20,26 @@ namespace CompanyApiTest
             client = server.CreateClient();
         }
 
-        //[Fact]
-        //public async Task Should_return_hello_world_with_default_request()
-        //{
-        //    // given
-        //    Company company = new Company(name: "Baymax");
-        //    string request = JsonConvert.SerializeObject(company);
-        //    StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+        [Fact]
+        public async Task Should_Add_Correct_Company_When_Add_Company()
+        {
+            // I can add a company if its name no same to any existing company
+            // given
+            Company company = new Company(name: "Apple");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
 
-        //    // when
-        //    var response = await client.GetAsync("companies");
-        //    response.EnsureSuccessStatusCode();
-        //    var responseString = await response.Content.ReadAsStringAsync();
+            // when
+            var postResponse = await client.PostAsync("Company/companies", requestBody);
+            var postResponseString = await postResponse.Content.ReadAsStringAsync();
+            Company postCompany = JsonConvert.DeserializeObject<Company>(postResponseString);
+            var response = await client.GetAsync($"Company/companies/{postCompany.Id}");
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            Company actualCompany = JsonConvert.DeserializeObject<Company>(responseString);
 
-        //    // then
-        //    Assert.Equal("Hello World", responseString);
-        //}
+            // then
+            Assert.Equal(company, actualCompany);
+        }
     }
 }
