@@ -34,6 +34,7 @@ namespace CompanyApi.Controllers
 
             string companyID = GenerateCompanyID();
             Company newCompany = new Company(companyID, company.Name);
+            newCompany.Employees = company.Employees;
             companies[companyID] = newCompany;
             return CreatedAtRoute(nameof(GetCompanyByID), new { id = newCompany.CompanyID }, newCompany);
         }
@@ -83,6 +84,17 @@ namespace CompanyApi.Controllers
         public List<Employee> GetAllEmployee(string companyID)
         {
             return companies[companyID].Employees.Values.ToList();
+        }
+
+        [HttpPatch("{companyID}/employees/{employeeID}")]
+        public async Task<ActionResult> UpdateEmployee(string companyID, string employeeID, EmployeeUpdateModel employeeUpdateModel)
+        {
+            var employee = companies[companyID].Employees[employeeID];
+            employee.Name = employeeUpdateModel.Name is null ? employee.Name : employeeUpdateModel.Name;
+            employee.Salary = employeeUpdateModel.Salary.HasValue
+                ? employeeUpdateModel.Salary.Value
+                : employee.Salary;
+            return Ok();
         }
 
         private string GenerateCompanyID()
