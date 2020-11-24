@@ -66,6 +66,14 @@ namespace CompanyApi.Controllers
             }
         }
 
+        [HttpDelete("{companyID}/employees/{employeeID}")]
+        public void DeleteEmployeeOfSpecificCompany(string companyId, string employeeId)
+        {
+            var companyFound = companies.FirstOrDefault(company => company.CompanyId == companyId);
+            var employeeFound = companyFound?.GetEmployees().FirstOrDefault(employee => employee.EmployeeID == employeeId);
+            companyFound?.GetEmployees().Remove(employeeFound);
+        }
+
         [HttpDelete]
         public void Clear()
         {

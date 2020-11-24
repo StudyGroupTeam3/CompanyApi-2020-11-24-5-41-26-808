@@ -120,7 +120,7 @@ updateModel{
 
 AC9: As a user, I can delete a specific employee under a specific company.
 DELETE
-/companies/{companyID}/{employeeID}
+/companies/{companyID}/employees/{employeeID}
 null
 204
 
