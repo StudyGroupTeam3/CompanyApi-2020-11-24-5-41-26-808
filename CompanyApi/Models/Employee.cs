@@ -7,6 +7,10 @@ namespace CompanyApi.Models
 {
     public class Employee
     {
+        public Employee()
+        {
+        }
+
         public Employee(string employeeID, string name, int salary)
         {
             EmployeeID = employeeID;
@@ -14,8 +18,14 @@ namespace CompanyApi.Models
             Salary = salary;
         }
 
-        public string EmployeeID { get; }
-        public string Name { get; }
-        public int Salary { get; }
+        public string EmployeeID { get; set; }
+        public string Name { get; set; }
+        public int Salary { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            var employee = (Employee)obj;
+            return employee != null && employee.Name == Name && employee.EmployeeID == EmployeeID;
+        }
     }
 }

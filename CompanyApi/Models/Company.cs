@@ -7,6 +7,7 @@ namespace CompanyApi.Models
 {
     public class Company
     {
+        private static List<Employee> employees = new List<Employee>();
         public Company()
         {
         }
@@ -24,6 +25,18 @@ namespace CompanyApi.Models
         {
             var company = (Company)obj;
             return company != null && company.Name == Name && company.CompanyId == CompanyId;
+        }
+
+        public Employee AddEmployee(Employee employee)
+        {
+            employee.EmployeeID = employees.Count.ToString();
+            employees.Add(employee);
+            return employee;
+        }
+
+        public List<Employee> GetEmployees()
+        {
+            return employees;
         }
     }
 }

@@ -100,6 +100,28 @@ namespace CompanyApiTest
             Assert.Equal(updateData.Name, actual.Name);
         }
 
+        // companies/{companyID}/employees
+        [Fact]
+        public async void AC6_should_return_employee_when_add_employee_in_specific_company()
+        {
+            // given
+            var companies = await AddCompanies();
+            var employee = new Employee("0", "person1", 1000);
+
+            // when
+            var request = JsonConvert.SerializeObject(employee);
+            var requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"companies/{companies[0].CompanyId}/employees", requestBody);
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<Employee>(responseString);
+
+            Assert.Equal(employee, actual);
+            Assert.Equal(employee, companies[0].GetEmployees()[0]);
+        }
+
         private async Task<List<Company>> AddCompanies()
         {
             var companies = new List<Company>()

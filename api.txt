@@ -77,7 +77,7 @@ updateModel{
 
 AC6: As a user, I can add an employee to a specific company
 PATCH
-/companies/{companyID}
+/companies/{companyID}/employees
 {
     "name" : "",
     "salary" : "",

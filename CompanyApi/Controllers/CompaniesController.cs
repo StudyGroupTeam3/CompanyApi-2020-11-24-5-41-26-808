@@ -40,7 +40,14 @@ namespace CompanyApi.Controllers
                 companyFound.Name = updateData.Name;
             }
         }
-        
+
+        [HttpPost("{companyID}/employees")]
+        public Employee AddEmployee(string companyId, Employee employee)
+        {
+            var companyFound = companies.FirstOrDefault(company => company.CompanyId == companyId);
+            return companyFound?.AddEmployee(employee);
+        }
+
         [HttpDelete]
         public void Clear()
         {
