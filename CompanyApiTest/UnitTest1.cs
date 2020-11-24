@@ -60,6 +60,23 @@ namespace CompanyApiTest
             Assert.Equal(expectCompanyNames.Select(item => item.Name), actualCompanies.Select(com => com.CompanyName));
         }
 
+        [Fact]
+        public async Task Should_Get_CompanybyName_Return_Correct_Company()
+        {
+            //given
+            var expectCompanyNames = await GenerateCompanies();
+            var expectedName = "Tecent";
+
+            //when
+            var response = await client.GetAsync($"CompanyApi/companies/{expectedName}");
+            var responseString = await response.Content.ReadAsStringAsync();
+            Company actualCompanies = JsonConvert.DeserializeObject<Company>(responseString);
+
+            //then
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(expectedName, actualCompanies.CompanyName);
+        }
+
         private async Task<List<NameGenerator>> GenerateCompanies()
         {
             var companyNames = new List<NameGenerator>()
