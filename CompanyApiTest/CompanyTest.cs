@@ -62,7 +62,7 @@ namespace CompanyApiTest
 
         // companies/{companyId}
         [Fact]
-        public async void AC3_should_return_an_existing_company()
+        public async void AC3_should_return_an_existing_company_when_get_existing_company()
         {
             // given
             var companies = await AddCompanies();
@@ -76,6 +76,28 @@ namespace CompanyApiTest
             var actual = JsonConvert.DeserializeObject<Company>(responseString);
 
             Assert.Equal(companies[0], actual);
+        }
+
+        // companies/{companyID}
+        [Fact]
+        public async void AC5_should_update_information_of_existing_company_when_update()
+        {
+            // given
+            var companies = await AddCompanies();
+            var updateData = new Update("newNAME");
+
+            // when
+            var request = JsonConvert.SerializeObject(updateData);
+            var requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PatchAsync($"companies/{companies[0].CompanyId}", requestBody);
+            var response = await client.GetAsync($"companies/{companies[0].CompanyId}");
+
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<Company>(responseString);
+
+            Assert.Equal(updateData.Name, actual.Name);
         }
 
         private async Task<List<Company>> AddCompanies()

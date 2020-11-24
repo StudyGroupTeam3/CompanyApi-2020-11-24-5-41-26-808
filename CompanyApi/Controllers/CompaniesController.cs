@@ -31,6 +31,16 @@ namespace CompanyApi.Controllers
             return companies.FirstOrDefault(company => company.CompanyId == companyId);
         }
 
+        [HttpPatch("{companyId}")]
+        public void ModifyName(string companyId, Update updateData)
+        {
+            var companyFound = companies.FirstOrDefault(company => company.CompanyId == companyId);
+            if (companyFound != null)
+            {
+                companyFound.Name = updateData.Name;
+            }
+        }
+        
         [HttpDelete]
         public void Clear()
         {
