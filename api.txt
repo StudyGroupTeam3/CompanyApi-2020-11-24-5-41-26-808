@@ -109,7 +109,7 @@ null
 
 AC8: As a user, I can update basic information of a specific employee under a specific company
 PATCH
-/companies/{companyID}/{employeeID}
+/companies/{companyID}/employees/{employeeID}
 updateModel{
     "name" : "",
     "salary" : "",

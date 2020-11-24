@@ -136,7 +136,7 @@ namespace CompanyApiTest
             };
 
             // when
-            foreach (var requestBody in employees.Select(employee => JsonConvert.SerializeObject(employee))
+            foreach (var requestBody in employees.Select(JsonConvert.SerializeObject)
                 .Select(request => new StringContent(request, Encoding.UTF8, "application/json")))
             {
                 await client.PostAsync($"companies/{companies[0].CompanyId}/employees", requestBody);
@@ -150,6 +150,39 @@ namespace CompanyApiTest
             var actual = JsonConvert.DeserializeObject<List<Employee>>(responseString);
 
             Assert.Equal(employees, actual);
+        }
+
+        // companies/{companyID}/employees/{employeeID}
+        [Fact]
+        public async void AC8_should_update_information_of_employee_under_specific_company()
+        {
+            // given
+            var companies = await AddCompanies();
+            var employees = new List<Employee>()
+            {
+                new Employee("0", "person1", 1000),
+                new Employee("1", "person2", 2000),
+                new Employee("2", "person3", 3000),
+            };
+            var updateData = new Update("newNAME");
+
+            // when
+            foreach (var requestBody in employees.Select(JsonConvert.SerializeObject)
+                .Select(request => new StringContent(request, Encoding.UTF8, "application/json")))
+            {
+                await client.PostAsync($"companies/{companies[0].CompanyId}/employees", requestBody);
+            }
+
+            var request2 = JsonConvert.SerializeObject(updateData);
+            var requestBody2 = new StringContent(request2, Encoding.UTF8, "application/json");
+            await client.PatchAsync($"companies/{companies[0].CompanyId}/employees/{companies[0].GetEmployees()[2].EmployeeID}", requestBody2);
+            var response = await client.GetAsync($"companies/{companies[0].CompanyId}/employees");
+            // then
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<List<Employee>>(responseString);
+
+            Assert.Equal(updateData.Name, actual[2].Name);
         }
 
         private async Task<List<Company>> AddCompanies()

@@ -32,7 +32,7 @@ namespace CompanyApi.Controllers
         }
 
         [HttpPatch("{companyId}")]
-        public void ModifyName(string companyId, Update updateData)
+        public void ModifyInformationOfCompany(string companyId, Update updateData)
         {
             var companyFound = companies.FirstOrDefault(company => company.CompanyId == companyId);
             if (companyFound != null)
@@ -52,6 +52,18 @@ namespace CompanyApi.Controllers
         public List<Employee> GetEmployeeList(string companyId)
         {
             return companies.FirstOrDefault(company => company.CompanyId == companyId)?.GetEmployees();
+        }
+
+        [HttpPatch("{companyID}/employees/{employeeID}")]
+        public void ModifyInformationOfEmployee(string companyId, string employeeId, Update updateData)
+        {
+            var employeeFound = companies.FirstOrDefault(company => company.CompanyId == companyId)
+                ?.GetEmployees()
+                .FirstOrDefault(employee => employee.EmployeeID == employeeId);
+            if (employeeFound != null)
+            {
+                employeeFound.Name = updateData.Name;
+            }
         }
 
         [HttpDelete]
