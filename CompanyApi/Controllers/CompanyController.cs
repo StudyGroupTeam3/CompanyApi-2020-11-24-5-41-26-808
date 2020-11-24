@@ -87,8 +87,9 @@ namespace CompanyApi.Controllers
         [HttpDelete("companies/{companyId}/{employeeId}")]
         public void DeleteEmployeeInformation(string companyId, string employeeId)
         {
-            //  I can delete a specific employee under a specific company.
-            return;
+            int companyIndex = companies.IndexOf(companies.Find(company => company.Id == companyId));
+            int employIndex = companies[companyIndex].Employees.IndexOf(companies[companyIndex].Employees.Find(employ => employ.Id == employeeId));
+            companies[companyIndex].Employees.RemoveAt(employIndex);
         }
 
         [HttpDelete("companies/{companyId}")]

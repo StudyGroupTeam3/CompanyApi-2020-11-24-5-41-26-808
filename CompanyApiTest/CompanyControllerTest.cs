@@ -201,5 +201,30 @@ namespace CompanyApiTest
             // then
             Assert.Equal(new Employee("Rose", 30000) { Id = employee.Id }, actualEmployee);
         }
+
+        [Fact]
+        public async Task Should_Delete_Specific_Employee_In_Specific_Company_When_Delete_Employee_In_Specific_Company()
+        {
+            // given
+            await client.DeleteAsync("Company/clear");
+            Employee employee = new Employee("Jack", 12000);
+            Company company = new Company(name: "Apple") { Employees = new List<Employee> { employee } };
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("Company/companies", requestBody);
+
+            // when
+            UpdateEmployee updateEmployee = new UpdateEmployee("Rose", 30000);
+            string patchRequest = JsonConvert.SerializeObject(updateEmployee);
+            StringContent patchRequestBody = new StringContent(patchRequest, Encoding.UTF8, "application/json");
+            await client.DeleteAsync($"Company/companies/{company.Id}/{employee.Id}");
+            var response = await client.GetAsync($"Company/companies/{company.Id}/employees");
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<Employee> actualEmployees = JsonConvert.DeserializeObject<List<Employee>>(responseString);
+
+            // then
+            Assert.Null(actualEmployees.Find(thisCompany => thisCompany.Id == company.Id)?.ToString());
+        }
     }
 }
