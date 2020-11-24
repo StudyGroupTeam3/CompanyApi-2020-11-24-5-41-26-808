@@ -36,7 +36,7 @@ namespace CompanyApi.Controllers
             return companies.Find(thisCompany => thisCompany.Id == companyId);
         }
 
-        [HttpGet("companies/pageDisplay/{pageIndex}")]
+        [HttpGet("companies/pages/{pageIndex}")]
         public List<Company> GetCompaniesInOnePage(int pageSize, int pageIndex)
         {
             //  I can obtain X(page size) companies from index of Y(page index start from 1)
@@ -83,6 +83,12 @@ namespace CompanyApi.Controllers
         {
             //  I can delete a specific company, and all employees belong to this company should also be deleted
             return;
+        }
+
+        [HttpDelete("clear")]
+        public void Clear()
+        {
+            companies.Clear();
         }
     }
 }
