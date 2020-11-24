@@ -39,8 +39,16 @@ namespace CompanyApi.Controllers
         [HttpGet("companies/pages/{pageIndex}")]
         public List<Company> GetCompaniesInOnePage(int pageSize, int pageIndex)
         {
-            //  I can obtain X(page size) companies from index of Y(page index start from 1)
-            return null;
+            List<Company> pageCompanies = companies.Where(company =>
+            {
+                if (companies.IndexOf(company) < pageSize * (pageIndex - 1))
+                {
+                    return false;
+                }
+
+                return companies.IndexOf(company) < pageSize * pageIndex;
+            }).ToList();
+            return pageCompanies;
         }
 
         [HttpPut("companies/{companyId}")]

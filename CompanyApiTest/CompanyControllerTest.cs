@@ -87,5 +87,28 @@ namespace CompanyApiTest
             // then
             Assert.Equal(companyList[0], actualCompanies);
         }
+
+        [Fact]
+        public async Task Should_Return_Correct_Companies_In_One_Page_When_Get_Companies_In_Page()
+        {
+            // given
+            List<Company> companyList = new List<Company> { new Company(name: "Apple"), new Company(name: "Google"), new Company(name: "Egypt"), new Company(name: "India") };
+            await client.DeleteAsync("Company/clear");
+            foreach (var company in companyList)
+            {
+                string request = JsonConvert.SerializeObject(company);
+                StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+                await client.PostAsync("Company/companies", requestBody);
+            }
+
+            // when
+            var response = await client.GetAsync($"Company/companies/pages/2?pageSize=2");
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<Company> actualCompanies = JsonConvert.DeserializeObject<List<Company>>(responseString);
+
+            // then
+            Assert.Equal(new List<Company>() { companyList[2], companyList[3] }, actualCompanies);
+        }
     }
 }
