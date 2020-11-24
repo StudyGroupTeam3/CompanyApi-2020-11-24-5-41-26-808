@@ -100,5 +100,20 @@ namespace CompanyApiTest.Controllers
             var acutalCompany = JsonConvert.DeserializeObject<Company>(responseString);
             Assert.Equal(company.Name, acutalCompany.Name);
         }
+
+        [Fact]
+        public async Task Should_Return_Not_Found_If_CompanyId_Is_Wrong()
+        {
+            // when
+            Company company = new Company(name: "DiDi");
+            string request = JsonConvert.SerializeObject(company);
+            StringContent requestBody = new StringContent(request, Encoding.UTF8, "application/json");
+            await client.PostAsync("Companies/", requestBody);
+
+            var response = await client.GetAsync("Companies/xxx11234");
+
+            // then
+            Assert.True(response.StatusCode == HttpStatusCode.NotFound);
+        }
     }
 }
