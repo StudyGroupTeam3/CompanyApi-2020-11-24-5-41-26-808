@@ -40,8 +40,13 @@ namespace CompanyApi.Controllers
         }
 
         [HttpGet]
-        public List<Company> GetAllCompany()
+        public List<Company> GetAllCompany(int? pageSize, int? startPage)
         {
+            if (pageSize.HasValue && startPage.HasValue)
+            {
+                return companies.Select(idCompanyPair => idCompanyPair.Value).Skip((startPage.Value - 1) * pageSize.Value).Take(pageSize.Value).ToList();
+            }
+
             return companies.Select(idCompanyPair => idCompanyPair.Value).ToList();
         }
 
@@ -51,11 +56,11 @@ namespace CompanyApi.Controllers
             return companies[id];
         }
 
-        [HttpGet("page")]
-        public List<Company> GetCompanyByPage(int pageSize, int startPage)
-        {
-            return companies.Select(idCompanyPair => idCompanyPair.Value).Skip((startPage - 1) * pageSize).Take(pageSize).ToList();
-        }
+        //[HttpGet("page")]
+        //public List<Company> GetCompanyByPage(int pageSize, int startPage)
+        //{
+        //    return companies.Select(idCompanyPair => idCompanyPair.Value).Skip((startPage - 1) * pageSize).Take(pageSize).ToList();
+        //}
 
         [HttpPatch("{id}")]
         public async Task<ActionResult> UpdateCompany(string id, CompanyUpdateModel companyUpdateModel)
@@ -94,6 +99,14 @@ namespace CompanyApi.Controllers
             employee.Salary = employeeUpdateModel.Salary.HasValue
                 ? employeeUpdateModel.Salary.Value
                 : employee.Salary;
+            return Ok();
+        }
+
+        [HttpDelete("{companyID}/employees/{employeeID}")]
+        public async Task<ActionResult> DeleteEmployee(string companyID, string employeeID)
+        {
+            var company = companies[companyID];
+            company.Employees.Remove(employeeID);
             return Ok();
         }
 
