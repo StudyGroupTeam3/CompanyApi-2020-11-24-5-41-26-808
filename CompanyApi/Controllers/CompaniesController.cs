@@ -110,6 +110,7 @@ namespace CompanyApi.Controllers
             return Ok();
         }
 
+
         private string GenerateCompanyID()
         {
             string companyIDGenerated = new string(companyID);
