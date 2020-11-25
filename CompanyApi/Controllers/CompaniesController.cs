@@ -110,6 +110,12 @@ namespace CompanyApi.Controllers
             return Ok();
         }
 
+        [HttpDelete("{companyID}")]
+        public async Task<ActionResult> DeleteCompany(string companyID)
+        {
+            companies.Remove(companyID);
+            return Ok();
+        }
 
         private string GenerateCompanyID()
         {
