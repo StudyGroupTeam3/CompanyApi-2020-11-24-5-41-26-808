@@ -1,0 +1,43 @@
+AC5
+PATCH /companies/{id}
+{
+    name:""
+}
+200, 409(can not change name to the same with another company)
+
+AC6
+POST /companies/{id}
+{
+    employeeID:"",
+    name:"",
+    salary:0
+}
+200
+
+AC7
+GET /companies/{id}/employees
+200
+[
+    {
+        employeeID:"",
+        name:"",
+        salary:0
+    },
+    ...
+]
+
+AC8
+PATCH /companies/{id}/employees/{id}
+{
+    name:"",
+    salary:0
+}
+200
+
+AC9
+DELETE /companies/{id}/employees/{id}
+200
+
+AC10
+DELETE /companies/{id}
+200
